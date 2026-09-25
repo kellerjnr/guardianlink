@@ -168,3 +168,91 @@ code, pre, .font-monospace {
     50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px #22c55e; }
     100% { transform: scale(0.95); opacity: 0.5; }
 }
+/* ==========================================================
+   MOBILE RESPONSIVENESS & TOUCH OPTIMIZATION (< 768px)
+   ========================================================== */
+@media (max-width: 767.98px) {
+    /* Prevent accidental side-scrolling */
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    /* Padding adjustments for phone viewports */
+    .container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    /* Hero section scaling */
+    .hero-tactical {
+        padding: 2.5rem 0 2rem !important;
+        text-align: left;
+    }
+
+    .hero-tactical h1 {
+        font-size: 1.85rem !important;
+        line-height: 1.25;
+    }
+
+    .hero-tactical .lead {
+        font-size: 0.95rem !important;
+    }
+
+    /* Action buttons fill width on phones */
+    .hero-tactical .d-flex.flex-wrap.gap-2 .btn,
+    .btn-lg {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        padding: 0.75rem 1rem !important;
+        font-size: 0.95rem !important;
+    }
+
+    /* Navbar mobile menu polish */
+    .navbar-tactical .navbar-collapse {
+        background: rgba(6, 11, 20, 0.98);
+        border: 1px solid var(--border-subtle);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 0.75rem;
+    }
+
+    .navbar-tactical .navbar-nav .nav-link {
+        padding: 0.65rem 0.5rem;
+        border-bottom: 1px solid rgba(74, 98, 133, 0.15);
+    }
+
+    /* Card & panel mobile adjustments */
+    .card-tactical {
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .card-tactical .card-body {
+        padding: 1.1rem !important;
+    }
+
+    /* Tables scroll smoothly instead of breaking layout */
+    .table-responsive {
+        border: 0;
+        margin-bottom: 0;
+    }
+
+    .table-tactical td, 
+    .table-tactical th {
+        white-space: nowrap;
+        font-size: 0.8rem;
+    }
+
+    /* Map containers fit mobile height cleanly */
+    #map, #commander-map {
+        min-height: 380px !important;
+        height: 55vh !important;
+    }
+
+    /* Touch targets: ease typing on mobile touchscreens */
+    .form-control, .form-select {
+        font-size: 16px !important; /* Prevents iOS auto-zoom on input focus */
+        padding: 0.75rem 0.85rem !important;
+    }
+}
