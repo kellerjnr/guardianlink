@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4">
+
+            <div class="card shadow-sm border rounded-3">
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="text-center mb-4">
+                        <div class="mb-2 text-primary fs-1">
+                            <i class="bi bi-shield-lock-fill"></i>
+                        </div>
+                        <h4 class="fw-bold mb-1">Sign In</h4>
+                        <p class="text-muted small">GuardianLink NG Portal Access</p>
+                    </div>
+
+                    <!-- Flash messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <!-- Login Form -->
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold" for="email">Email address</label>
+                            <input 
+                                type="email" 
+                                class="form-control" 
+                                id="email" 
+                                name="email" 
+                                placeholder="name@example.com" 
+                                required 
+                                autofocus>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label small fw-semibold mb-0" for="password">Password</label>
+                                <a href="{{ url_for('forgot_password') }}" class="small text-decoration-none">Forgot password?</a>
+                            </div>
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="password" 
+                                name="password" 
+                                placeholder="••••••••" 
+                                required>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg fw-semibold">
+                                Sign In
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4 pt-3 border-top">
+                        <span class="text-muted small">Don't have an account?</span>
+                        <a href="{{ url_for('register') }}" class="fw-semibold text-decoration-none ms-1">Register</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo credentials card -->
+            <div class="card mt-3 bg-light border-0 shadow-sm">
+                <div class="card-body py-2 px-3 text-center small text-muted">
+                    <strong>Demo Accounts:</strong><br>
+                    Admin: <code>admin@securealert.ng</code> | <code>Admin123!</code><br>
+                    Responder: <code>responder@securealert.ng</code> | <code>Responder123!</code>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Enterprise Security Hero Section -->
+<section class="security-hero py-5 text-white">
+    <div class="container py-lg-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-dark border border-secondary text-uppercase fw-semibold tracking-wide small mb-3">
+                    <span class="pulse-indicator"></span> 24/7 Threat Monitoring & Incident Response
+                </div>
+                <h1 class="display-4 fw-bold lh-sm mb-3">
+                    Mission-Critical Public Safety & Tactical Coordination
+                </h1>
+                <p class="lead text-light-50 mb-4 opacity-75">
+                    GuardianLink NG provides enterprise-grade situational awareness, verified incident telemetry, rapid distress dispatch, and encrypted field coordination for citizens and authorized emergency responders.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    {% if user %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg px-4 shadow">
+                            Go to Mission Dashboard
+                        </a>
+                        <a href="{{ url_for('report') }}" class="btn btn-outline-light btn-lg px-4">
+                            File Incident Report
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-4 shadow">
+                            Request Access / Register
+                        </a>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg px-4">
+                            Secure Portal Login
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card security-stat-card border-0 shadow-lg p-3 bg-dark bg-opacity-75 text-white border border-secondary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-3 mb-3">
+                            <span class="text-uppercase small fw-bold text-info">System Telemetry</span>
+                            <span class="badge bg-success">Operational</span>
+                        </div>
+                        <div class="row g-3 text-center">
+                            <div class="col-6">
+                                <div class="p-3 rounded bg-black bg-opacity-50 border border-secondary">
+                                    <div class="fs-3 fw-bold text-primary">112</div>
+                                    <div class="small text-muted">National Toll-Free</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 rounded bg-black bg-opacity-50 border border-secondary">
+                                    <div class="fs-3 fw-bold text-warning">&lt; 3 min</div>
+                                    <div class="small text-muted">Average Triage</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="p-3 rounded bg-black bg-opacity-50 border border-secondary text-start">
+                                    <div class="d-flex justify-content-between text-muted small mb-1">
+                                        <span>Field Encryption</span>
+                                        <span class="text-success">256-bit Secure</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between text-muted small">
+                                        <span>Location Rounding</span>
+                                        <span class="text-info">Privacy Protected</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Defense & Capability Pillars -->
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="text-center max-w-700 mx-auto mb-5">
+            <h6 class="text-primary text-uppercase fw-bold">Capabilities</h6>
+            <h2 class="fw-bold">Enterprise Situational Response</h2>
+            <p class="text-muted">Engineered to bridge community intelligence directly with authorized response personnel under real-world conditions.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-3 rounded-4 feature-box">
+                    <div class="card-body">
+                        <div class="icon-shape bg-primary bg-opacity-10 text-primary rounded-3 mb-3 p-3 d-inline-block">
+                            <i class="bi bi-shield-lock fs-2"></i>
+                        </div>
+                        <h5 class="fw-bold">Encrypted Telemetry</h5>
+                        <p class="text-muted small">Incident submissions, GPS coordinates, and evidentiary files are verified before release to protect reporters and operations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-3 rounded-4 feature-box">
+                    <div class="card-body">
+                        <div class="icon-shape bg-danger bg-opacity-10 text-danger rounded-3 mb-3 p-3 d-inline-block">
+                            <i class="bi bi-broadcast fs-2"></i>
+                        </div>
+                        <h5 class="fw-bold">Live Tactical Tracking</h5>
+                        <p class="text-muted small">Time-limited voluntary location sharing enables command units to track assets or vulnerable individuals in transit.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm p-3 rounded-4 feature-box">
+                    <div class="card-body">
+                        <div class="icon-shape bg-warning bg-opacity-10 text-warning rounded-3 mb-3 p-3 d-inline-block">
+                            <i class="bi bi-cpu fs-2"></i>
+                        </div>
+                        <h5 class="fw-bold">Safety AI Decision-Support</h5>
+                        <p class="text-muted small">Automated triage summaries and tactical action briefs supply responders with immediate threat categorization.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Verified Intelligence Stream -->
+<section class="py-5 bg-light border-top">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-bold mb-1">Public Verified Advisories</h4>
+                <p class="text-muted small mb-0">De-identified confirmed incidents for neighborhood situational awareness.</p>
+            </div>
+            <a href="{{ url_for('safety_map') }}" class="btn btn-outline-dark btn-sm">
+                Open Safety Map
+            </a>
+        </div>
+
+        {% if incidents %}
+            <div class="row g-3">
+                {% for item in incidents %}
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100 border-0 shadow-sm rounded-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger-subtle">{{ item.incident_type }}</span>
+                                    <small class="text-muted">{{ item.created_at.strftime("%d %b") if item.created_at else "" }}</small>
+                                </div>
+                                <h6 class="fw-bold text-truncate">{{ item.location_name or "Area Report" }}</h6>
+                                <p class="text-muted small mb-0 text-truncate-2">{{ item.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-secondary text-center py-4 mb-0">
+                No active public threat advisories currently broadcast for this sector.
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

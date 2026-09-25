@@ -1,0 +1,14 @@
+# Python and local editor files
+.venv/
+__pycache__/
+*.py[cod]
+.vscode/
+
+# Local-only data and secrets
+.env
+securealert.db
+uploads/
+
+# OS files
+.DS_Store
+Thumbs.db

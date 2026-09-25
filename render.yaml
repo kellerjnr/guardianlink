@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: guardianlink-ng
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    healthCheckPath: /health
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: guardianlink-db
+          property: connectionString
+      - key: BOOTSTRAP_ADMIN_EMAIL
+        sync: false
+      - key: BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
+
+databases:
+  - name: guardianlink-db
+    databaseName: guardianlink
+    user: guardianlink

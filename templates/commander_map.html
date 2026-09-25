@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<div class="commander-console-wrapper">
+    <!-- Top Tactical Control Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 p-3 bg-dark border-bottom border-secondary text-white">
+        <div class="d-flex align-items-center gap-3">
+            <span class="radar-ping-icon"></span>
+            <div>
+                <h5 class="fw-bold mb-0 tracking-wide font-monospace text-uppercase text-info">
+                    <i class="bi bi-broadcast-pin me-1"></i> Tactical Command // Live Telemetry Console
+                </h5>
+                <span class="text-secondary small font-monospace">SATELLITE DOWNLINK: ENCRYPTED // REFRESH INTERVAL: 15s</span>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-danger bg-opacity-25 border border-danger text-danger px-3 py-2 font-monospace small">
+                <i class="bi bi-shield-exclamation me-1"></i> RESTRICTED ACCESS: AUTHORIZED RESPONDERS ONLY
+            </span>
+            <button class="btn btn-outline-info btn-sm font-monospace" onclick="location.reload()">
+                <i class="bi bi-arrow-repeat me-1"></i> RESCAN FIELD
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Command Deck Grid -->
+    <div class="row g-0 flex-grow-1" style="min-height: 82vh;">
+        <!-- Left Asset Roster Sidebar -->
+        <div class="col-lg-3 bg-dark border-end border-secondary p-3 text-white overflow-y-auto" style="max-height: 82vh;">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary">
+                <span class="fw-bold font-monospace small text-uppercase text-secondary">Active Field Signals</span>
+                <span class="badge bg-info text-dark font-monospace" id="unit-count">0 UNITS</span>
+            </div>
+
+            <!-- Unit Cards Stream -->
+            <div id="unit-roster" class="d-flex flex-column gap-2">
+                <!-- Dynamically injected via JavaScript below -->
+            </div>
+        </div>
+
+        <!-- Right Geospatial Map Deck -->
+        <div class="col-lg-9 position-relative">
+            <div id="commander-map" style="width: 100%; height: 100%; min-height: 550px;"></div>
+
+            <!-- HUD Overlay Overlay Ticker -->
+            <div class="map-hud-overlay position-absolute bottom-0 start-0 m-3 p-2 px-3 rounded font-monospace small text-info bg-dark bg-opacity-75 border border-info border-opacity-25 shadow" style="z-index: 1000;">
+                <span class="text-white-50">GRID SECTOR:</span> 08-NG-DEFENSE &bull; 
+                <span class="text-white-50">TELEMETRY:</span> <span id="hud-status">SYNCHRONIZED</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const items = {{ markers|tojson }};
+    const unitCountBadge = document.getElementById('unit-count');
+    const rosterContainer = document.getElementById('unit-roster');
+    unitCountBadge.innerText = `${items.length} ACTIVE ${items.length === 1 ? 'UNIT' : 'UNITS'}`;
+
+    // Initialize Leaflet Map centered on Nigeria default
+    const map = L.map('commander-map', {
+        zoomControl: true,
+        attributionControl: false
+    }).setView([9.0820, 8.6753], 6);
+
+    // Dark Tactical Tile Layer (CartoDB DarkMatter)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        subdomains: 'abcd'
+    }).addTo(map);
+
+    // Custom Glowing Radar Marker Icon
+    const customRadarIcon = L.divIcon({
+        className: 'tactical-marker',
+        html: `
+            <div class="marker-pulse-wrapper">
+                <div class="marker-ring"></div>
+                <div class="marker-core"></div>
+            </div>
+        `,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+        popupAnchor: [0, -14]
+    });
+
+    const markersMap = {};
+
+    if (items.length === 0) {
+        rosterContainer.innerHTML = `
+            <div class="p-3 text-center border border-secondary border-dashed rounded text-secondary font-monospace small">
+                <i class="bi bi-radar fs-4 d-block mb-2"></i>
+                NO ACTIVE FIELD SESSIONS TRANSMITTING.
+            </div>
+        `;
+    } else {
+        items.forEach((item, index) => {
+            // Place marker on tactical map
+            const marker = L.marker([item.lat, item.lng], { icon: customRadarIcon })
+                .addTo(map)
+                .bindPopup(`
+                    <div class="tactical-popup font-monospace">
+                        <div class="popup-title text-info fw-bold mb-1">${item.name}</div>
+                        <div class="small text-muted mb-1">DESIGNATION: <span class="text-white">${item.role.toUpperCase()}</span></div>
+                        <div class="small text-muted mb-1">TRANSMIT START: <span class="text-white">${item.started}</span></div>
+                        <div class="small text-muted mb-1">LAST TELEMETRY: <span class="text-warning">${item.updated}</span></div>
+                        <div class="small text-muted">EXPIRATION: <span class="text-danger">${item.expires}</span></div>
+                    </div>
+                `);
+
+            markersMap[index] = marker;
+
+            // Generate Tactical Roster Card
+            const card = document.createElement('div');
+            card.className = 'unit-card p-2 rounded border border-secondary bg-black bg-opacity-40 cursor-pointer';
+            card.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <strong class="text-info font-monospace small">${item.name}</strong>
+                    <span class="badge bg-secondary font-monospace" style="font-size: 0.65rem;">${item.role.toUpperCase()}</span>
+                </div>
+                <div class="font-monospace text-secondary" style="font-size: 0.72rem;">
+                    <div>GPS: ${item.lat.toFixed(4)}, ${item.lng.toFixed(4)}</div>
+                    <div>UPDATED: <span class="text-warning">${item.updated}</span></div>
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                map.flyTo([item.lat, item.lng], 15, { animate: true, duration: 1.2 });
+                marker.openPopup();
+            });
+
+            rosterContainer.appendChild(card);
+        });
+
+        // Fit map bounds to encompass active markers
+        const group = new L.featureGroup(Object.values(markersMap));
+        map.fitBounds(group.getBounds().pad(0.3));
+    }
+</script>
+{% endblock %}

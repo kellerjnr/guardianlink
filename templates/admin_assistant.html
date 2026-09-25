@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb & Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 small">
+                    <li class="breadcrumb-item"><a href="{{ url_for('responder') }}" class="text-decoration-none">Responder Command</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Incident Assessment #{{ report.id }}</li>
+                </ol>
+            </nav>
+            <h2 class="h3 fw-bold mb-0 text-dark">
+                Tactical Intelligence Brief — Case #{{ report.id }}
+            </h2>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('responder') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i> Back to Console
+            </a>
+            <a target="_blank" href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}" class="btn btn-primary btn-sm">
+                <i class="bi bi-geo-alt me-1"></i> Satellite View
+            </a>
+        </div>
+    </div>
+
+    <!-- Legal & Operational Guardrail Notice -->
+    <div class="alert alert-warning border-warning-subtle d-flex align-items-center gap-3 mb-4 shadow-sm" role="alert">
+        <div class="fs-4 text-warning">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <div class="small mb-0">
+            <strong>Decision-Support Notice:</strong> This assessment is generated via deterministic rule-based prioritization. An authorized responder or dispatch commander must independently verify case telemetry and authorize all tactical engagements.
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Tactical Assessment -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+                    <span class="text-uppercase small fw-bold tracking-wide">Threat Analysis & Summary</span>
+                    <span class="badge {% if brief.priority == 'High' %}bg-danger{% else %}bg-warning text-dark{% endif %} px-3 py-2 text-uppercase">
+                        {{ brief.priority }} Priority
+                    </span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="p-3 bg-light rounded-3 border mb-4">
+                        <h5 class="fw-bold text-dark mb-1">{{ brief.summary }}</h5>
+                        <p class="text-muted small mb-0">Incident Category: <span class="fw-semibold text-dark">{{ report.incident_type }}</span> | Status: <span class="badge bg-secondary">{{ report.status }}</span></p>
+                    </div>
+
+                    <h5 class="fw-bold text-dark mb-3">Suggested Response Workflow</h5>
+                    <div class="list-group list-group-flush border rounded-3 mb-3">
+                        {% for step in brief.next_steps %}
+                            <div class="list-group-item d-flex align-items-start gap-3 py-3">
+                                <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">{{ loop.index }}</span>
+                                <div class="text-dark small lh-base">{{ step }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="card bg-light border-0 rounded-3 p-3">
+                        <h6 class="fw-bold small text-secondary mb-1">Citizen Narrative</h6>
+                        <p class="mb-0 text-dark small">{{ report.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Telemetry & Location Sidebar -->
+        <div class="col-lg-4">
+            <!-- Geolocation Telemetry Card -->
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold mb-0 text-dark">Location Telemetry</h6>
+                </div>
+                <div class="card-body p-3">
+                    <div class="mb-3">
+                        <span class="text-muted small d-block">Reported Sector / Landmark</span>
+                        <strong class="text-dark">{{ brief.location }}</strong>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="text-muted small d-block">Raw GPS Coordinates</span>
+                        <code class="text-primary fs-6">{{ report.latitude }}, {{ report.longitude }}</code>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="text-muted small d-block">Timestamp Received</span>
+                        <span class="small text-dark">{{ report.created_at.strftime("%d %b %Y, %H:%M:%S UTC") if report.created_at else "Unavailable" }}</span>
+                    </div>
+
+                    <div class="d-grid gap-2 pt-2 border-top">
+                        <a target="_blank" href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> Open Google Maps Pin
+                        </a>
+                        {% if report.evidence_file %}
+                            <a href="{{ url_for('evidence', filename=report.evidence_file) }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-paperclip me-1"></i> View Attached Evidence
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Triage Control Actions -->
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold mb-0 text-dark">Update Case Status</h6>
+                </div>
+                <div class="card-body p-3">
+                    <form method="POST" action="{{ url_for('update_status', incident_id=report.id) }}">
+                        <div class="mb-3">
+                            <label for="status" class="form-label small text-muted">Change Workflow Status</label>
+                            <select name="status" id="status" class="form-select form-select-sm">
+                                <option value="Submitted" {% if report.status == 'Submitted' %}selected{% endif %}>Submitted</option>
+                                <option value="Under review" {% if report.status == 'Under review' %}selected{% endif %}>Under review</option>
+                                <option value="Verified" {% if report.status == 'Verified' %}selected{% endif %}>Verified</option>
+                                <option value="In progress" {% if report.status == 'In progress' %}selected{% endif %}>In progress</option>
+                                <option value="Resolved" {% if report.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                                <option value="Rejected" {% if report.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                            </select>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-dark btn-sm">
+                                Commit Status Change
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
